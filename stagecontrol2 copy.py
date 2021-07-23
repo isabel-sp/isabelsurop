@@ -1,5 +1,3 @@
-#version that actually work works
-
 """ This package can be used to drive the Thorlabs MDT693A piezo controller
 
 
@@ -23,8 +21,8 @@ DEFAULT_PORT = 'COM3'
 class PZT_driver(serial.Serial):
     def __init__(self, port=DEFAULT_PORT, baudrate=115200):
         serial.Serial.__init__(self,port, baudrate, timeout=0.1)
+        self.xyz = [0,0,0]
 
-    
     def set_value(self, cmd, val):
         self.write(str.encode('%s%f\r'%(cmd,val)))
         
@@ -62,32 +60,43 @@ class PZT_driver(serial.Serial):
         s = self.read_txt(cmd)
         return float(s)
 
+    def get_all(self):
+        """Returns list [x, y, z] of the output voltages"""
+        return self.xyz
+
     def get_x(self):
         """Reads and returns the x axis output voltage"""
-        return self.read_float('xr?')
+        #return self.read_float('xr?')
+        return self.xyz[0]
 
     def get_y(self):
         """Reads and returns the y axis output voltage"""
-        return self.read_float('yr?')
+        #return self.read_float('yr?')
+        return self.xyz[1]
 
     def get_z(self):
         """Reads and returns the z axis output voltage"""
-        return self.read_float('zr?')
+        #return self.read_float('zr?')
+        return self.xyz[2]
 
     def set_all(self, val):
         """Sets all outputs to the set voltage"""
+        self.xyz = [0, 0, 0]
         self.set_value('AV', val)
 
     def set_x(self, val):
         """Sets the output voltage for the x axis"""
+        self.xyz[0] = val
         self.set_value('XV', val)
 
     def set_y(self, val):
         """Sets the output voltage for the y axis"""
+        self.xyz[1] = val
         self.set_value('YV', val)
 
     def set_z(self, val):
         """Sets the output voltage for the z axis"""
+        self.xyz[2] = val
         self.set_value('ZV', val)
 
     def set_zeros(self):
@@ -157,7 +166,7 @@ class PZT_driver(serial.Serial):
     y = property(get_y, set_y)
     z = property(get_z, set_z)
     
-    all = property(lambda self:None, set_all)
+    all = property(get_all, set_all)
 
     x_min = property(get_x_min, set_x_min)
     y_min = property(get_y_min, set_y_min)
@@ -173,10 +182,7 @@ class PZT_driver(serial.Serial):
         self.close()
  
  
- 
-     
-        
-        
+
 pzt = PZT_driver()
 pzt.set_x(30)
 pzt.y = 10
