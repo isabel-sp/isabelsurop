@@ -103,6 +103,18 @@ class PZT_driver(serial.Serial):
         """ Sets all outputs to zero"""
         self.set_all(0)
     
+    def increment_x(self, val):
+        self.set_x(self.x + val)
+        self.x += val
+
+    def increment_y(self, val):
+        self.set_y(self.y + val)
+        self.y += val
+    
+    def increment_z(self, val):
+        self.set_z(self.z + val)
+        self.z += val
+
     @property
     def max_out(self):
         """returns the output voltage limit setting"""
@@ -180,10 +192,10 @@ class PZT_driver(serial.Serial):
     def __del__(self):
         # close the serial port before deleting the object
         self.close()
- 
- 
+
 
 pzt = PZT_driver()
 pzt.set_x(30)
 pzt.y = 10
+pzt.increment_x(10)
 
