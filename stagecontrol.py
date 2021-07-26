@@ -184,7 +184,10 @@ class PZT_driver(serial.Serial):
 
 #test functions
 pzt = PZT_driver()
+print(pzt.all)
 pzt.set_x(30)
 pzt.y = 10
+print(pzt.all)
 pzt.increment_x(10)
+print(pzt.all)
 

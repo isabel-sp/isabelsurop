@@ -3,7 +3,7 @@
 import cv2
 import numpy as np
 import alignhelper as im
-import stagecontrol as mdt
+# import stagecontrol as mdt
 import matplotlib.pyplot as plt
 
 image_number = 0
