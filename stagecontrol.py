@@ -3,6 +3,7 @@
 import serial
 import sys
 import re
+import time
 
 DEFAULT_PORT = 'COM3'
 
@@ -10,6 +11,7 @@ class PZT_driver(serial.Serial):
     def __init__(self, port=DEFAULT_PORT, baudrate=115200):
         serial.Serial.__init__(self,port, baudrate, timeout=0.1)
         self.xyz = [0,0,0]
+        self.set_zero()
 
     def set_value(self, cmd, val):
         self.write(str.encode('%s%f\r'%(cmd,val)))
@@ -87,7 +89,7 @@ class PZT_driver(serial.Serial):
         self.xyz[2] = val
         self.set_value('ZV', val)
 
-    def set_zeros(self):
+    def set_zero(self):
         """ Sets all outputs to zero"""
         self.set_all(0)
     
@@ -183,11 +185,14 @@ class PZT_driver(serial.Serial):
 
 
 #test functions
-pzt = PZT_driver()
-print(pzt.all)
-pzt.set_x(30)
-pzt.y = 10
-print(pzt.all)
-pzt.increment_x(10)
-print(pzt.all)
+if __name__ == "__main__":
+    pzt = PZT_driver()
+    print(pzt.all)
+    time.sleep(5)
+    pzt.set_x(30)
+    pzt.y = 10
+    print(pzt.all)
+    time.sleep(5)
+    pzt.increment_x(10)
+    print(pzt.all)
 
