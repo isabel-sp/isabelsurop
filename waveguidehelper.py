@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.signal import argrelextrema
 
 def narrow_down(lst, x, p, scope):
     #lst = np.ndarray.tolist(lst)
@@ -13,4 +14,13 @@ def narrow_down(lst, x, p, scope):
         if (lst[x+shift] > cutoff).any() and (high == None):
             high = x+shift
     return(low or x, high or x)
-    
+
+def local_max(lst):
+    return argrelextrema(lst, np.greater)
+
+if __name__ == "__main__":
+    x = np.random.random(12)
+    print(x)
+
+    # for local maxima
+    print(argrelextrema(x, np.greater))

@@ -1,5 +1,8 @@
+
 import numpy as np
 from numpy.lib.function_base import average
+from scipy.signal import argrelextrema
+import matplotlib.pyplot as plt
 
 def bw_green(img):
     for row in img:
@@ -21,6 +24,32 @@ def temp_findline(row, x, p = 10, scope = 50):
             high = x+shift
     bounds = (low or x, high or x)
     return average(bounds)
+
+######################
+
+def find_light_point(img, x, y, p = 10, scope = 50):
+    #lst = np.ndarray.tolist(lst)
+    lst = img[y]
+    cut = int(len(lst)*((100-scope)/200))
+    cutoff = np.percentile(lst[cut:-cut], p)
+    low = None
+    high = None
+
+    for shift in range(len(lst)//2):
+        if (x-shift > 0) and (lst[x-shift] > cutoff).any() and (low == None):
+            low = x-shift
+        if (x+shift < len(lst)) and (lst[x+shift] > cutoff).any() and (high == None):
+            high = x+shift
+    bounds = (low or x, high or x)
+    local_max = argrelextrema(lst[bounds[0]:bounds[1]], np.greater)
+    plt.figure()
+    markers_on = local_max[0]
+    plt.plot(lst[bounds[0]:bounds[1]], '-g.', mfc='red', mec='k', markevery=markers_on)
+    plt.show(block = False)
+
+    if len(local_max[0]) == 0:
+        return None
+    return local_max[0][0] + low
 
 
 ######################################OLD#################################

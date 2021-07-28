@@ -59,11 +59,11 @@ def main_click(event, x, y, flags, param):
             #UPDATE VALUES
             temp_clicked = None
             #x_found_wvguide = img_process.temp_findline(captured_img[wvguide[1]], wvguide[0])
-            x_found_wvguide = img_process.line_center_x(captured_img, x, y)[0]
+            x_found_wvguide = img_process.find_light_point(captured_img, wvguide[0], wvguide[1])
             wvguide = (x_found_wvguide, wvguide[1])
             #search estimated area that snspd shifted to
             #x_found_snspd = img_process.temp_findline(captured_img[snspd[1]], snspd[0] + stage_shift) 
-            x_found_snspd = img_process.line_center_x(captured_img, x + stage_shift, y)[0]
+            x_found_snspd = img_process.find_light_point(captured_img, snspd[0] + stage_shift, snspd[1])
             snspd = (x_found_snspd, snspd[1])
 
         elif not temp_clicked == None:
@@ -71,13 +71,15 @@ def main_click(event, x, y, flags, param):
             if click == 'snspd':
                 #take temp and try to find snspd waveguide, set coordinate
                 #x_found = img_process.temp_findline(captured_img[y], x)
-                x_found = img_process.line_center_x(captured_img, temp_clicked[0], temp_clicked[1])[0]
-                snspd = (x_found, y)
+                x_found = img_process.find_light_point(captured_img, temp_clicked[0], temp_clicked[1])
+                snspd = (x_found or temp_clicked[0], temp_clicked[1])
+                
             elif click == 'wvguide':
                 #take temp and try to find waveguide, set coordinate
                 #x_found = img_process.temp_findline(captured_img[y], x)
-                x_found = img_process.line_center_x(captured_img, temp_clicked[0], temp_clicked[1])[0]
-                wvguide = (x_found, y)
+                x_found = img_process.find_light_point(captured_img, temp_clicked[0], temp_clicked[1])
+                wvguide = (x_found or temp_clicked[0], temp_clicked[1])
+
             temp_clicked = None
         else:
             print('click somewhere to set value')

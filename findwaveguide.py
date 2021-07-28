@@ -38,7 +38,11 @@ def straight_img_click(event, x, y, flags, param):
 
         plt.figure()
         (low, high) = waveguidehelper.narrow_down(row, x, 10, 50)
-        plt.plot(row[low:high])
+        local_maxima = waveguidehelper.local_max(row[low:high])[0]
+        #markers_on = np.array([x-low])
+        markers_on = local_maxima
+        plt.plot(row[low:high], '-g.', mfc='red', mec='k', markevery=markers_on)
+        print(x-low)
         plt.show(block = False)
 
 
