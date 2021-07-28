@@ -29,11 +29,14 @@ def position_x(img, x, y, h = 100):
     lowest = x - h + pixel_range.index(min(pixel_range))
     return (lowest, y)
 
-def line_center_x(img, x, y, thickness = 10):
-    x1 = position_x(img, x, y)[0]
-    pixel_range = [img[y][x + x_shift] for x_shift in range(-5 * thickness, 5 * thickness)]
-    pixel_range.sort()
-    threshold = pixel_range[thickness]
+def line_center_x(img, x, y, thickness = 50, percentile = 30):
+    #x1 = position_x(img, x, y)[0]
+    x1 = x
+    # pixel_range = [img[y][x + x_shift] for x_shift in range(-5 * thickness, 5 * thickness)]
+    # pixel_range.sort()
+    # threshold = pixel_range[thickness]
+
+    threshold = np.percentile(img[y][x-thickness:x+thickness], percentile)
     r_edge, l_edge = (None, None)
 
     for x_shift in range(thickness):

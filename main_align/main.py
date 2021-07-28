@@ -8,7 +8,8 @@ import cv2
 import time
 import numpy as np
 
-captured_img = np.zeros((512,512,3), np.uint8)
+captured_img = None
+color_img = np.zeros((1080,1440 ,3), np.uint8)
 temp_clicked = None
 snspd = None
 wvguide = None
@@ -20,10 +21,14 @@ img_raw = cv2.imread('test_14401080.png')
 #CALLBACK FUNCTIONS
 def raw_img_format(event, x, y, flags, param):
     global captured_img
+    global color_img
+
     if event == cv2.EVENT_LBUTTONDOWN:
         captured_img = cv2.cvtColor(img_raw,cv2.COLOR_BGR2GRAY)
         #captured_img = img_process.bw_green(captured_img)
         captured_img = cv2.resize(captured_img, (1440, 1080))
+
+        color_img = cv2.resize(img_raw, (1440, 1080))
 
     
 def main_click(event, x, y, flags, param):
@@ -66,12 +71,12 @@ def main_click(event, x, y, flags, param):
             if click == 'snspd':
                 #take temp and try to find snspd waveguide, set coordinate
                 #x_found = img_process.temp_findline(captured_img[y], x)
-                x_found = img_process.line_center_x(captured_img, x, y)[0]
+                x_found = img_process.line_center_x(captured_img, temp_clicked[0], temp_clicked[1])[0]
                 snspd = (x_found, y)
             elif click == 'wvguide':
                 #take temp and try to find waveguide, set coordinate
                 #x_found = img_process.temp_findline(captured_img[y], x)
-                x_found = img_process.line_center_x(captured_img, x, y)[0]
+                x_found = img_process.line_center_x(captured_img, temp_clicked[0], temp_clicked[1])[0]
                 wvguide = (x_found, y)
             temp_clicked = None
         else:
@@ -87,7 +92,7 @@ cv2.setMouseCallback("Captured Image", main_click)
 
 while True:
     cv2.imshow("Camera Feed", img_raw)
-    cv2.imshow("Captured Image", display_functions.draw_buttons(captured_img, temp_clicked, snspd, wvguide))
+    cv2.imshow("Captured Image", display_functions.draw_buttons(color_img, temp_clicked, snspd, wvguide))
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 cv2.destroyAllWindows()

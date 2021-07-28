@@ -1,6 +1,7 @@
 import cv2
+import numpy as np
 
-def draw_buttons(img, temp_clicked, snspd, wvguide):
+def draw_buttons(source, temp_clicked, snspd, wvguide):
     can_align = not snspd == None and not wvguide == None
     purple = (255,100,170)
     red = (51,51,255)
@@ -10,44 +11,46 @@ def draw_buttons(img, temp_clicked, snspd, wvguide):
     black = (0, 0, 0)
     font = cv2.FONT_HERSHEY_COMPLEX
 
+    img = np.ndarray.copy(source)
+
     #clicked
     cv2.rectangle(img, (10, 10), (450, 100), white, -1)
-    cv2.rectangle(img, (10, 10), (450, 100), black, 2)
-    cv2.rectangle(img, (10, 10), (200, 100), black, -1)
+    cv2.rectangle(img, (10, 10), (450, 100), purple, 2)
+    cv2.rectangle(img, (10, 10), (200, 100), purple, -1)
     cv2.putText(img,'Clicked',(40,65), font, 1,white,2)
     if not temp_clicked == None:
         cv2.putText(img, str(temp_clicked), (220, 65), font, 1,black,2)
 
     #SNSPD
     cv2.rectangle(img, (10, 110), (450, 200), white, -1)
-    cv2.rectangle(img, (10, 110), (450, 200), black, 2)
-    cv2.rectangle(img, (10, 110), (200, 200), black, -1)
+    cv2.rectangle(img, (10, 110), (450, 200), red, 2)
+    cv2.rectangle(img, (10, 110), (200, 200), red, -1)
     cv2.putText(img,'SNSPD',(50,165), font, 1,white,2)
     if not snspd == None:
         cv2.putText(img, str(snspd), (220, 165), font, 1,black,2)
 
     #Waveguide
     cv2.rectangle(img, (10, 210), (450, 300), white, -1)
-    cv2.rectangle(img, (10, 210), (450, 300), black, 2)
-    cv2.rectangle(img, (10, 210), (200, 300), black, -1)
+    cv2.rectangle(img, (10, 210), (450, 300), blue, 2)
+    cv2.rectangle(img, (10, 210), (200, 300), blue, -1)
     cv2.putText(img,'Waveguide',(20,265), font, 1,white,2)
     if not wvguide == None:
         cv2.putText(img, str(wvguide), (220, 265), font, 1,black,2)
 
     #Align
     if can_align:
-        cv2.rectangle(img, (200, 320), (450, 400), white, -1)
+        cv2.rectangle(img, (200, 320), (450, 400), green, -1)
         cv2.rectangle(img, (200, 320), (450, 400), black, 5)
         #fill in left or right
         cv2.putText(img, 'Align ' + '(right)', (220, 370), font, 1,black,2)
 
     #draw dots
     if temp_clicked:
-        cv2.circle(img, temp_clicked, radius=2, color=black, thickness=2)
+        cv2.circle(img, temp_clicked, radius=2, color=purple, thickness=5)
     if wvguide:
-        cv2.circle(img, wvguide, radius=2, color=black, thickness=2)
+        cv2.circle(img, wvguide, radius=2, color=blue, thickness=6)
     if snspd:
-        cv2.circle(img, snspd, radius=2, color=black, thickness=2)
+        cv2.circle(img, snspd, radius=2, color=red, thickness=6)
     return img
 
 def within(x, y, corner1, corner2):
