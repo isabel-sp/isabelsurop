@@ -3,6 +3,7 @@ import sys
 from PIL import Image
 import os
 import cv2 as cv2
+import matplotlib.pyplot as plt
 
 #PATH THINGS
 print("original environment path")
@@ -76,10 +77,17 @@ with TLCameraSDK() as camera_sdk, MonoToColorProcessorSDK() as mono_to_color_sdk
             print(color_image_48_bpp)
             print(color_image_48_bpp.shape)
 
+            plt.plot(color_image_48_bpp)
+            plt.show()
+
             img = np.reshape(color_image_48_bpp, (1440, 1080, 3))
-            
+            print(img)
+
             #display image
+            cv2.imwrite('something.png', img)
+
             cv2.imshow('image', img)
+            
             cv2.waitKey(0)
             cv2.closeAllWindows()
 
