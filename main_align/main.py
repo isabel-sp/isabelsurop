@@ -2,48 +2,49 @@
 Main file to run to align
 '''
 
-import img_process
-import display_functions
 import cv2
 import time
 import numpy as np
+from cam_helper import *
+from display_functions import *
+from img_process import *
+from piezo_helper import *
 
-captured_img = None
+raw_img = None
+bw_img = None
 color_img = np.zeros((1080,1440 ,3), np.uint8)
 temp_clicked = None
 snspd = None
 wvguide = None
-
-#update this with a live image feed
-img_raw = cv2.imread('test_14401080.png')
+angle = None
 
 
 #CALLBACK FUNCTIONS
 def raw_img_format(event, x, y, flags, param):
-    global captured_img
+    global bw_img
     global color_img
+    global angle
 
     if event == cv2.EVENT_LBUTTONDOWN:
-        captured_img = cv2.cvtColor(img_raw,cv2.COLOR_BGR2GRAY)
-        #captured_img = img_process.bw_green(captured_img)
-        captured_img = cv2.resize(captured_img, (1440, 1080))
-
-        color_img = cv2.resize(img_raw, (1440, 1080))
+        color_img = size_and_straighten(raw_img, angle or 0)
+        bw_img = img_process_bw(color_img)
 
     
 def main_click(event, x, y, flags, param):
-    global captured_img
+    global bw_img
     global temp_clicked
     global snspd
     global wvguide
+    global angle
 
     if event == cv2.EVENT_LBUTTONDOWN:
         print('clicked')
-        click = display_functions.button_clicked(x, y)
+        click = button_clicked(x, y)
         if not click:
             print('marked point')
             #mark temporary point
             temp_clicked = (x, y)
+
         elif click == 'align' and snspd and wvguide:
             print('aligned')
             #RUN ALIGNMENT THING
@@ -53,31 +54,31 @@ def main_click(event, x, y, flags, param):
             print('stage moved x amount')
 
             #UPDATE CAPTURED IMAGE
-            captured_img = cv2.cvtColor(img_raw,cv2.COLOR_BGR2GRAY)
-            captured_img = cv2.resize(captured_img, (1440, 1080))
+            bw_img = cv2.cvtColor(raw_img,cv2.COLOR_BGR2GRAY)
+            bw_img = cv2.resize(bw_img, (1440, 1080))
 
             #UPDATE VALUES
             temp_clicked = None
-            #x_found_wvguide = img_process.temp_findline(captured_img[wvguide[1]], wvguide[0])
-            x_found_wvguide = img_process.find_light_point(captured_img, wvguide[0], wvguide[1])
+            x_found_wvguide = find_light_point(bw_img, wvguide[0], wvguide[1])
             wvguide = (x_found_wvguide, wvguide[1])
             #search estimated area that snspd shifted to
-            #x_found_snspd = img_process.temp_findline(captured_img[snspd[1]], snspd[0] + stage_shift) 
-            x_found_snspd = img_process.find_light_point(captured_img, snspd[0] + stage_shift, snspd[1])
+            x_found_snspd = find_light_point(bw_img, snspd[0] + stage_shift, snspd[1])
             snspd = (x_found_snspd, snspd[1])
+
+        elif click == 'straighten':
+            angle = 30
+            print('angle setting')
 
         elif not temp_clicked == None:
             print('setting value')
             if click == 'snspd':
                 #take temp and try to find snspd waveguide, set coordinate
-                #x_found = img_process.temp_findline(captured_img[y], x)
-                x_found = img_process.find_light_point(captured_img, temp_clicked[0], temp_clicked[1])
+                x_found = find_light_point(bw_img, temp_clicked[0], temp_clicked[1])
                 snspd = (x_found or temp_clicked[0], temp_clicked[1])
                 
             elif click == 'wvguide':
                 #take temp and try to find waveguide, set coordinate
-                #x_found = img_process.temp_findline(captured_img[y], x)
-                x_found = img_process.find_light_point(captured_img, temp_clicked[0], temp_clicked[1])
+                x_found = find_light_point(bw_img, temp_clicked[0], temp_clicked[1])
                 wvguide = (x_found or temp_clicked[0], temp_clicked[1])
 
             temp_clicked = None
@@ -93,8 +94,11 @@ cv2.setMouseCallback("Camera Feed", raw_img_format)
 cv2.setMouseCallback("Captured Image", main_click)
 
 while True:
-    cv2.imshow("Camera Feed", img_raw)
-    cv2.imshow("Captured Image", display_functions.draw_buttons(color_img, temp_clicked, snspd, wvguide))
+    #update this with a live image feed
+    raw_img = get_raw_photo()
+    
+    cv2.imshow("Camera Feed", raw_img)
+    cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide))
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 cv2.destroyAllWindows()

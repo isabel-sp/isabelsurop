@@ -1,6 +1,7 @@
-import cv2
 import math
+import cv2
 import numpy as np
+
 
 def rotate_image(image, angle):
 
@@ -124,105 +125,52 @@ def crop_around_center(image, width, height):
     return image[y1:y2, x1:x2]
 
 
-def size_and_straighten(img, angle = 0):
-    img = cv2.resize(img, (1440, 1080))
+def cropped_rotate(img, angle):
     image_height, image_width = img.shape[0:2]
     rotated = rotate_image(np.copy(img), angle)
     return crop_around_center(rotated, *largest_rotated_rect(image_width, image_height,math.radians(angle)))
 
 
-def img_process_bw(img):
-    return cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+def demo():
+    """
+    Demos the largest_rotated_rect function
+    """
 
+    image = cv2.imread("3clicked.png")
+    image_height, image_width = image.shape[0:2]
 
-def draw_buttons(source, temp_clicked, snspd, wvguide):
-    can_align = not snspd == None and not wvguide == None
-    purple = (255,100,170)
-    red = (51,51,255)
-    blue = (255,128,0)
-    green = (0,204,0)
-    white = (255, 255, 255)
-    black = (0, 0, 0)
-    font = cv2.FONT_HERSHEY_COMPLEX
+    cv2.imshow("Original Image", image)
 
-    img = np.ndarray.copy(source)
+    print ("Press [enter] to begin the demo")
+    print ("Press [q] or Escape to quit")
 
-    #clicked
-    cv2.rectangle(img, (10, 10), (450, 100), white, -1)
-    cv2.rectangle(img, (10, 10), (450, 100), purple, 2)
-    cv2.rectangle(img, (10, 10), (200, 100), purple, -1)
-    cv2.putText(img,'Clicked',(40,65), font, 1,white,2)
-    if not temp_clicked == None:
-        cv2.putText(img, str(temp_clicked), (220, 65), font, 1,black,2)
+    key = cv2.waitKey(0)
+    if key == ord("q") or key == 27:
+        exit()
 
-    #SNSPD
-    cv2.rectangle(img, (10, 110), (450, 200), white, -1)
-    cv2.rectangle(img, (10, 110), (450, 200), red, 2)
-    cv2.rectangle(img, (10, 110), (200, 200), red, -1)
-    cv2.putText(img,'SNSPD',(50,165), font, 1,white,2)
-    if not snspd == None:
-        cv2.putText(img, str(snspd), (220, 165), font, 1,black,2)
+    for i in np.arange(0, 360, 0.5):
+        image_orig = np.copy(image)
+        image_rotated = rotate_image(image, i)
+        image_rotated_cropped = crop_around_center(
+            image_rotated,
+            *largest_rotated_rect(
+                image_width,
+                image_height,
+                math.radians(i)
+            )
+        )
 
-    #Waveguide
-    cv2.rectangle(img, (10, 210), (450, 300), white, -1)
-    cv2.rectangle(img, (10, 210), (450, 300), blue, 2)
-    cv2.rectangle(img, (10, 210), (200, 300), blue, -1)
-    cv2.putText(img,'Waveguide',(20,265), font, 1,white,2)
-    if not wvguide == None:
-        cv2.putText(img, str(wvguide), (220, 265), font, 1,black,2)
+        key = cv2.waitKey(2)
+        if(key == ord("q") or key == 27):
+            exit()
 
-    #Align
-    if can_align:
-        cv2.rectangle(img, (200, 320), (450, 400), green, -1)
-        cv2.rectangle(img, (200, 320), (450, 400), black, 5)
-        shift = wvguide[0] - snspd[0]
-        cv2.putText(img, 'Align (' + str(shift) + ')', (220, 370), font, 1,black,2)
+        cv2.imshow("Original Image", image_orig)
+        cv2.imshow("Rotated Image", image_rotated)
+        cv2.imshow("Cropped Image", image_rotated_cropped)
 
-    #Straighten
-    cv2.rectangle(img, (1240, 10), (1420, 60), black, -1)
-    cv2.putText(img, 'reset angle', (1250, 40), font, 0.8, white, 1)
+    print ("Done")
 
-    #draw dots
-    if temp_clicked:
-        cv2.circle(img, temp_clicked, radius=2, color=purple, thickness=5)
-    if wvguide:
-        cv2.circle(img, wvguide, radius=2, color=blue, thickness=6)
-    if snspd:
-        cv2.circle(img, snspd, radius=2, color=red, thickness=6)
-    return img
-
-def within(x, y, corner1, corner2):
-    return x < corner2[0] and x > corner1[0] and y < corner2[1] and y > corner1[1]
-
-def button_clicked(x, y):
-    '''
-    returns the button the click was in - if not, returns false
-    '''
-    if within(x, y, (10, 110), (450, 200)):
-        return 'snspd'
-    if within(x, y, (10, 210), (450, 300)):
-        return 'wvguide'
-    if within(x, y, (200, 320), (450, 400)):
-        return 'align'
-    if within(x, y, (1240, 10), (1420, 60)):
-        return 'straighten'
-    return False
-
-def test_function(event, x, y, flags, param):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        xy = "%d,%d" % (x, y)
-        cv2.circle(img, (x, y), 1, (0, 0, 255), thickness=-1)
-        cv2.putText(img, xy, (x, y), cv2.FONT_HERSHEY_PLAIN,
-                    1.0, (0, 0, 0), thickness=1)
-        print(button_clicked(x, y))
-        cv2.imshow("display", img)
-
-
-
-if __name__ == "__main__":
-    img = cv2.imread('test_14401080.png')
-    button_img = draw_buttons(img, (1000, 1000), (500, 1000), (500, 500))
-    cv2.imshow('display', button_img)
-    cv2.setMouseCallback("display", test_function)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+img = cv2.imread('3clicked.png')
+cv2.imshow('img', nice_rotate(img, 10))
+cv2.waitKey(0)
+cv2.destroyAllWindows()
