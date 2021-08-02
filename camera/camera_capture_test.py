@@ -58,7 +58,7 @@ with TLCameraSDK() as camera_sdk, MonoToColorProcessorSDK() as mono_to_color_sdk
         ) as mono_to_color_processor:
 
             mono_to_color_processor.color_space = COLOR_SPACE.SRGB  # sRGB color space
-            mono_to_color_processor.output_format = FORMAT.RGB_PIXEL  # data is returned as sequential RGB values
+            mono_to_color_processor.output_format = FORMAT.BGR_PIXEL  # data is returned as sequential RGB values
 
             print("Red Gain = {red_gain}\nGreen Gain = {green_gain}\nBlue Gain = {blue_gain}\n".format(
                 red_gain=mono_to_color_processor.red_gain,
@@ -70,12 +70,28 @@ with TLCameraSDK() as camera_sdk, MonoToColorProcessorSDK() as mono_to_color_sdk
             color_image_48_bpp = mono_to_color_processor.transform_to_48(frame.image_buffer, image_width, image_height)
 
             # try to format and display
-            #currently 1555200 numbers
+            #currently 1555200 numbersz
             #need to format to numpy array of dimentions (1080, 1440, 3)
 
 
             print(color_image_48_bpp)
             print(color_image_48_bpp.shape)
+
+            new_img = []
+            for y in range(1080):
+                row = []
+                for x in range(1440):
+                    pixel = []
+                    for p in range(3):
+                        pixel.append(color_image_48_bpp[p + 3*x + 3*1440*y])
+                    row.append(pixel)
+                new_img.append(row)
+            new_img = np.array(new_img)
+            print(np.shape(new_img))
+            cv2.imwrite('somethingnew.png', new_img)
+            cv2.imshow('image', new_img)
+            cv2.waitKey(0)
+            cv2.closeAllWindows()
 
             plt.plot(color_image_48_bpp)
             plt.show()
