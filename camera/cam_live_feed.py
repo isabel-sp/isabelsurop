@@ -34,22 +34,17 @@ class ImageAcquisitionThread(threading.Thread):
         self._camera = camera
         self._previous_timestamp = 0
 
-        # setup color processing if necessary
-        if self._camera.camera_sensor_type != SENSOR_TYPE.BAYER:
-            # Sensor type is not compatible with the color processing library
-            self._is_color = False
-        else:
-            self._mono_to_color_sdk = MonoToColorProcessorSDK()
-            self._image_width = self._camera.image_width_pixels
-            self._image_height = self._camera.image_height_pixels
-            self._mono_to_color_processor = self._mono_to_color_sdk.create_mono_to_color_processor(
-                SENSOR_TYPE.BAYER,
-                self._camera.color_filter_array_phase,
-                self._camera.get_color_correction_matrix(),
-                self._camera.get_default_white_balance_matrix(),
-                self._camera.bit_depth
-            )
-            self._is_color = True
+        self._mono_to_color_sdk = MonoToColorProcessorSDK()
+        self._image_width = self._camera.image_width_pixels
+        self._image_height = self._camera.image_height_pixels
+        self._mono_to_color_processor = self._mono_to_color_sdk.create_mono_to_color_processor(
+            SENSOR_TYPE.BAYER,
+            self._camera.color_filter_array_phase,
+            self._camera.get_color_correction_matrix(),
+            self._camera.get_default_white_balance_matrix(),
+            self._camera.bit_depth
+        )
+        self._is_color = True
 
         self._bit_depth = camera.bit_depth
         self._camera.image_poll_timeout_ms = 0  # Do not want to block for long periods of time
