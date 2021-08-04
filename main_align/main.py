@@ -9,6 +9,7 @@ from cam_helper import *
 from display_functions import *
 from img_process import *
 from piezo_helper import *
+from straighten import straighten_sequence
 
 raw_img = None
 bw_img = None
@@ -16,7 +17,7 @@ color_img = np.zeros((1080,1440 ,3), np.uint8)
 temp_clicked = None
 snspd = None
 wvguide = None
-angle = None
+angle = 0
 
 
 #CALLBACK FUNCTIONS
@@ -66,8 +67,9 @@ def main_click(event, x, y, flags, param):
             snspd = (x_found_snspd, snspd[1])
 
         elif click == 'straighten':
-            angle = 30
+            angle = None
             print('angle setting')
+            print(angle)
 
         elif not temp_clicked == None:
             print('setting value')
@@ -101,6 +103,12 @@ while True:
     cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide))
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
+    
+    if angle == None:
+        angle = straighten_sequence(bw_img)
+        print('angle set')
+        print(angle)
+
 cv2.destroyAllWindows()
 
 
