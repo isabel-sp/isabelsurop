@@ -25,6 +25,7 @@ except ImportError:
 
 import numpy as np
 import cv2
+import time
 
 class ImageAcquisitionThread(threading.Thread):
 
@@ -81,6 +82,7 @@ class ImageAcquisitionThread(threading.Thread):
 
     def run_one_img(self):
         open_cv_image = None
+        time.sleep(0.5)
         try:
             frame = self._camera.get_pending_frame_or_null()
             if not frame is None:
