@@ -26,8 +26,6 @@ def raw_img_click(event, x, y, flags, param):
 
     #left click: update image, then also update black and white image
     if event == cv2.EVENT_LBUTTONDOWN:
-        #UPDATE IMAGE CODE
-
         #update bw image
         img_bw = cv2.cvtColor(img_raw,cv2.COLOR_BGR2GRAY)
         img_bw = cv2.resize(img_bw, (640, 480))
@@ -48,23 +46,13 @@ def bw_img_click(event, x, y, flags, param):
     #right click: straighten image based on last 2 clicks
     if event == cv2.EVENT_RBUTTONDOWN:
         img_straight = im.straighten(img_bw, output_y_coords[-1], output_y_coords[-2])
-        #img_straight = cv2.bitwise_not(img_straight)
 
 def straight_img_click(event, x, y, flags, param):
 
     #left click, find coordinate of center waveguide
     if event == cv2.EVENT_LBUTTONDOWN:
-        #print(img_straight)
-        #center = im.line_center_x(img_straight, x, y, 20)
-        #center = im.line_center_x_light(img_straight, x, y, 20)
-        #cv2.circle(img_straight, center, radius=2, color=(0, 255, 255), thickness=1)
         plt.plot(img_straight[y])
         plt.show(block = False)
-
-        # cv2.circle(img_straight, (center[0]+200, center[1]), radius=2, color=(0, 255, 255), thickness=1)
-        # cv2.circle(img_straight, (center[0]-200, center[1]), radius=2, color=(0, 255, 255), thickness=1)
-        #print("x coordinate of the waveguide is" + str(center[0]))
-
 
 #Open windows
 cv2.namedWindow("Raw Image")
