@@ -176,6 +176,7 @@ def draw_buttons(source, temp_clicked, snspd, wvguide):
     if can_align:
         cv2.rectangle(img, (200, 320), (450, 400), green, -1)
         cv2.rectangle(img, (200, 320), (450, 400), black, 5)
+        #####TypeError: unsupported operand type(s) for -: 'NoneType' and 'NoneType'###############
         shift = wvguide[0] - snspd[0]
         cv2.putText(img, 'Align (' + str(shift) + ')', (220, 370), font, 1,black,2)
 
