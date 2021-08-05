@@ -128,7 +128,8 @@ def size_and_straighten(img, angle = 0):
     img = cv2.resize(img, (1440, 1080))
     image_height, image_width = img.shape[0:2]
     rotated = rotate_image(np.copy(img), angle)
-    return crop_around_center(rotated, *largest_rotated_rect(image_width, image_height,math.radians(angle)))
+    img = crop_around_center(rotated, *largest_rotated_rect(image_width, image_height,math.radians(angle)))
+    return cv2.resize(img, (1440, 1080))
 
 
 def img_process_bw(img):
