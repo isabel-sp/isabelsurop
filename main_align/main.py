@@ -56,6 +56,7 @@ def main_click(event, x, y, flags, param):
             print('moving stage')
             stage_shift = wvguide[0] - snspd[0] #in estimated pixels??
             pzt.shift_pixel(stage_shift)
+            print(pzt.y)
 
             time.sleep(2)
             
