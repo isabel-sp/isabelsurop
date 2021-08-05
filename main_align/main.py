@@ -18,6 +18,7 @@ temp_clicked = None
 snspd = None
 wvguide = None
 angle = 0
+pzt = PZT_driver()
 
 
 #CALLBACK FUNCTIONS
@@ -29,6 +30,8 @@ def raw_img_format(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         color_img = size_and_straighten(raw_img, angle or 0)
         bw_img = img_process_bw(color_img)
+
+        cv2.imwrite('bw_img.png', bw_img)
 
     
 def main_click(event, x, y, flags, param):
@@ -47,11 +50,15 @@ def main_click(event, x, y, flags, param):
             temp_clicked = (x, y)
 
         elif click == 'align' and snspd and wvguide:
+            global pzt
             print('aligned')
             #RUN ALIGNMENT THING
             print('moving stage')
+            stage_shift = wvguide[0] - snspd[0] #in estimated pixels??
+            pzt.shift_pixel(stage_shift)
+
             time.sleep(2)
-            stage_shift = 10 #in estimated pixels??
+            
             print('stage moved x amount')
 
             #UPDATE CAPTURED IMAGE
@@ -106,6 +113,8 @@ while True:
     
     if angle == None:
         angle = straighten_sequence(bw_img)
+        raw_img = size_and_straighten(raw_img, angle or 0)
+        bw_img = img_process_bw(color_img)
         print('angle set')
         print(angle)
 
