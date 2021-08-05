@@ -71,7 +71,7 @@ class LiveViewCanvas(tk.Canvas):
             
             open_cv_image = np.array(image)
             open_cv_image = open_cv_image[:, :, ::-1].copy() 
-            cv2.imshow()
+            cv2.imshow('image', open_cv_image)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 cv2.closeAllWindows()
 

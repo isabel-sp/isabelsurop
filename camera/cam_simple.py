@@ -46,8 +46,8 @@ with TLCameraSDK() as camera_sdk, MonoToColorProcessorSDK() as mono_to_color_sdk
             camera.bit_depth
         ) as mono_to_color_processor:
 
-            mono_to_color_processor.color_space = COLOR_SPACE.SRGB  # sRGB color space
-            mono_to_color_processor.output_format = FORMAT.RGB_PIXEL  # data is returned as sequential RGB values
+            #mono_to_color_processor.color_space = COLOR_SPACE.SRGB  # sRGB color space
+            #mono_to_color_processor.output_format = FORMAT.RGB_PIXEL  # data is returned as sequential RGB values
 
             print("Red Gain = {red_gain}\nGreen Gain = {green_gain}\nBlue Gain = {blue_gain}\n".format(
                 red_gain=mono_to_color_processor.red_gain,
@@ -62,7 +62,7 @@ with TLCameraSDK() as camera_sdk, MonoToColorProcessorSDK() as mono_to_color_sdk
             open_cv_image = open_cv_image[:, :, ::-1].copy() 
             
             #display image
-            cv2.imwrite('opencv_image', open_cv_image)
+            cv2.imwrite('opencv_image.png', open_cv_image)
             cv2.imshow('image', open_cv_image)
             cv2.waitKey(0)
             cv2.closeAllWindows()
