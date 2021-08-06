@@ -179,6 +179,7 @@ class PZT_driver(serial.Serial):
     z_max = property(get_z_max, set_z_max)
     
     def shift_pixel(self, pixels, ratio = 1):
+        #75 volt moves it about 1/5 of the height of the thing
         self.y += pixels * ratio
         print('piezo shifted ' + str(pixels * ratio))
 
