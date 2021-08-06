@@ -5,12 +5,8 @@ Main file to run to align
 from windows_setup import configure_path
 configure_path()
 
-from thorlabs_tsi_sdk.tl_camera import TLCameraSDK, TLCamera, Frame
-from thorlabs_tsi_sdk.tl_camera_enums import SENSOR_TYPE
-from thorlabs_tsi_sdk.tl_mono_to_color_processor import MonoToColorProcessorSDK
 
 import cv2
-from PIL import Image, ImageTk
 import time
 import numpy as np
 from cam_helper import *
@@ -115,41 +111,18 @@ cv2.setMouseCallback("Captured Image", main_click)
 with TLCameraSDK() as sdk:
     camera_list = sdk.discover_available_cameras()
     with sdk.open_camera(camera_list[0]) as camera:
-        mono_to_color_sdk = MonoToColorProcessorSDK()
-        mono_to_color_processor = mono_to_color_sdk.create_mono_to_color_processor(
-            SENSOR_TYPE.BAYER,
-            camera.color_filter_array_phase,
-            camera.get_color_correction_matrix(),
-            camera.get_default_white_balance_matrix(),
-            camera.bit_depth
-        )
-        camera.frames_per_trigger_zero_for_unlimited = 0
-        camera.arm(2)
-        camera.issue_software_trigger()
-
+        image_feed = ImageAcquisition(camera)
         raw_img = np.zeros((1080,1440 ,3), np.uint8)
 
+        #Main image loop
         while True:
-
-            frame = camera.get_pending_frame_or_null()
-            print(frame)
-            if frame is not None:
-                width = frame.image_buffer.shape[1]
-                height = frame.image_buffer.shape[0]
-                color_image_data = mono_to_color_processor.transform_to_24(frame.image_buffer, width, height)
-                print(color_image_data)
-                color_image_data = color_image_data.reshape(height, width, 3)
-                pil_image = Image.fromarray(color_image_data, mode = 'RGB')
-                raw_img = np.array(pil_image)
-                raw_img = raw_img[:, :, ::-1].copy()
-
+            raw_img = image_feed.get_frame(raw_img)
 
             cv2.imshow('Camera Feed', raw_img)
             cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide))
 
             if cv2.waitKey(1) & 0xFF == ord("q"):
-                mono_to_color_processor.dispose()
-                mono_to_color_sdk.dispose()
+                del image_feed
                 cv2.closeAllWindows()
             
             if angle == None:

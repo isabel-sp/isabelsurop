@@ -137,7 +137,7 @@ def img_process_bw(img):
 
 
 def draw_buttons(source, temp_clicked, snspd, wvguide):
-    can_align = not snspd == None and not wvguide == None
+    can_align = (not snspd == None) and (not wvguide == None) and (not snspd[0] == None) and (not wvguide[0] == None)
     purple = (255,100,170)
     red = (51,51,255)
     blue = (255,128,0)
