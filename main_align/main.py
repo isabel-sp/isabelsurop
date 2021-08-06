@@ -35,8 +35,6 @@ def raw_img_format(event, x, y, flags, param):
         color_img = size_and_straighten(raw_img, angle or 0)
         bw_img = img_process_bw(color_img)
 
-        cv2.imwrite('bw_img.png', bw_img)
-
     
 def main_click(event, x, y, flags, param):
     global bw_img

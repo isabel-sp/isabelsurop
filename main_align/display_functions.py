@@ -3,22 +3,15 @@ import math
 import numpy as np
 
 def rotate_image(image, angle):
-
-    # Get the image size
     image_size = (image.shape[1], image.shape[0])
     image_center = tuple(np.array(image_size) / 2)
-
     # Convert the OpenCV 3x2 rotation matrix to 3x3
     rot_mat = np.vstack(
         [cv2.getRotationMatrix2D(image_center, angle, 1.0), [0, 0, 1]]
     )
-
     rot_mat_notranslate = np.matrix(rot_mat[0:2, 0:2])
-
-    # Shorthand for below calcs
     image_w2 = image_size[0] * 0.5
     image_h2 = image_size[1] * 0.5
-
     # Obtain the rotated coordinates of the image corners
     rotated_coords = [
         (np.array([-image_w2,  image_h2]) * rot_mat_notranslate).A[0],
@@ -61,21 +54,10 @@ def rotate_image(image, angle):
         (new_w, new_h),
         flags=cv2.INTER_LINEAR
     )
-
     return result
 
 
 def largest_rotated_rect(w, h, angle):
-    """
-    Given a rectangle of size wxh that has been rotated by 'angle' (in
-    radians), computes the width and height of the largest possible
-    axis-aligned rectangle within the rotated rectangle.
-
-    Original JS code by 'Andri' and Magnus Hoff from Stack Overflow
-
-    Converted to Python by Aaron Snoswell
-    """
-
     quadrant = int(math.floor(angle / (math.pi / 2))) & 3
     sign_alpha = angle if ((quadrant & 1) == 0) else math.pi - angle
     alpha = (sign_alpha % math.pi + math.pi) % math.pi
@@ -84,9 +66,7 @@ def largest_rotated_rect(w, h, angle):
     bb_h = w * math.sin(alpha) + h * math.cos(alpha)
 
     gamma = math.atan2(bb_w, bb_w) if (w < h) else math.atan2(bb_w, bb_w)
-
     delta = math.pi - alpha - gamma
-
     length = h if (w < h) else w
 
     d = length * math.cos(alpha)
@@ -102,17 +82,10 @@ def largest_rotated_rect(w, h, angle):
 
 
 def crop_around_center(image, width, height):
-    """
-    Given a NumPy / OpenCV 2 image, crops it to the given width and height,
-    around it's centre point
-    """
-
     image_size = (image.shape[1], image.shape[0])
     image_center = (int(image_size[0] * 0.5), int(image_size[1] * 0.5))
-
     if(width > image_size[0]):
         width = image_size[0]
-
     if(height > image_size[1]):
         height = image_size[1]
 
@@ -191,6 +164,27 @@ def draw_buttons(source, temp_clicked, snspd, wvguide):
         cv2.circle(img, wvguide, radius=2, color=blue, thickness=6)
     if snspd:
         cv2.circle(img, snspd, radius=2, color=red, thickness=6)
+    return img
+
+def straighten_draw_buttons(source, angle, coords):
+    img = np.ndarray.copy(source)
+    white = (255, 255, 255)
+    black = (0, 0, 0)
+    font = cv2.FONT_HERSHEY_COMPLEX
+    cv2.putText(img,'Click two points that determine the horizontal', (40,40) , font, 0.8, black, 2)
+    cv2.putText(img,'Press the S key to set the rotation angle', (40,80) , font, 0.8, black, 2)
+    try:
+        cv2.putText(img,'Angle is currently ' + str(angle), (40, 120), font, 0.8, black, 2)
+    except:
+        cv2.putText(img,'no angle',(40, 120), font, 0.5, black, 1)
+    
+    try:
+        cv2.circle(img, coords[-1], radius=2, color=white, thickness=5)
+        try:
+            cv2.circle(img, coords[-2], radius=2, color=white, thickness=5)
+        except: pass
+    except: pass
+
     return img
 
 def within(x, y, corner1, corner2):
