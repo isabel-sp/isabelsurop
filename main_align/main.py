@@ -107,28 +107,24 @@ cv2.namedWindow("Captured Image")
 cv2.setMouseCallback("Camera Feed", raw_img_format)
 cv2.setMouseCallback("Captured Image", main_click)
 
+#Initialize Camera
+image_feed = ImageAcquisition()
 
-with TLCameraSDK() as sdk:
-    camera_list = sdk.discover_available_cameras()
-    with sdk.open_camera(camera_list[0]) as camera:
-        image_feed = ImageAcquisition(camera)
-        raw_img = np.zeros((1080,1440 ,3), np.uint8)
+#Main image loop
+while True:
+    raw_img = image_feed.get_frame(raw_img)
 
-        #Main image loop
-        while True:
-            raw_img = image_feed.get_frame(raw_img)
+    cv2.imshow('Camera Feed', raw_img)
+    cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide))
 
-            cv2.imshow('Camera Feed', raw_img)
-            cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide))
-
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                del image_feed
-                cv2.closeAllWindows()
-            
-            if angle == None:
-                angle = straighten_sequence(bw_img)
-                raw_img = size_and_straighten(raw_img, angle or 0)
-                bw_img = img_process_bw(color_img)
-                print('angle set')
-                print(angle)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        del image_feed
+        cv2.closeAllWindows()
+    
+    if angle == None:
+        angle = straighten_sequence(bw_img)
+        raw_img = size_and_straighten(raw_img, angle or 0)
+        bw_img = img_process_bw(color_img)
+        print('angle set')
+        print(angle)
 

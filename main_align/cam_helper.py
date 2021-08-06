@@ -9,11 +9,11 @@ from PIL import Image
 
 class ImageAcquisition():
 
-    def __init__(self, camera):
-        self.camera = camera
+    def __init__(self):
+        self.sdk = TLCameraSDK()
+        camera_list = self.sdk.discover_available_cameras()
+        self.camera = self.sdk.open_camera(camera_list[0])
         self._mono_to_color_sdk = MonoToColorProcessorSDK()
-        self._image_width = self.camera.image_width_pixels
-        self._image_height = self.camera.image_height_pixels
         self._mono_to_color_processor = self._mono_to_color_sdk.create_mono_to_color_processor(
             SENSOR_TYPE.BAYER,
             self.camera.color_filter_array_phase,
@@ -21,9 +21,9 @@ class ImageAcquisition():
             self.camera.get_default_white_balance_matrix(),
             self.camera.bit_depth
         )
-        camera.frames_per_trigger_zero_for_unlimited = 0
-        camera.arm(2)
-        camera.issue_software_trigger()
+        self.camera.frames_per_trigger_zero_for_unlimited = 0
+        self.camera.arm(2)
+        self.camera.issue_software_trigger()
 
     def get_frame(self, raw_img):
         frame = self.camera.get_pending_frame_or_null()
@@ -38,5 +38,8 @@ class ImageAcquisition():
         return raw_img
     
     def __del__(self):
+        self.camera.disarm()
+        self.camera.dispose()
+        self.sdk.dispose()
         self._mono_to_color_processor.dispose()
         self._mono_to_color_sdk.dispose()
