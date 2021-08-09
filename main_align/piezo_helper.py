@@ -178,10 +178,10 @@ class PZT_driver(serial.Serial):
     y_max = property(get_y_max, set_y_max)
     z_max = property(get_z_max, set_z_max)
     
-    def shift_pixel(self, pixels, ratio = 1):
+    def shift_pixel(self, pixels, ratio = 0.25):
         #75 volt moves it about 1/5 of the height of the thing
         self.y += pixels * ratio
-        print('piezo shifted ' + str(pixels * ratio))
+        print('piezo shifted ' + str(pixels * ratio) + ' V')
 
     def __del__(self):
         # close the serial port before deleting the object

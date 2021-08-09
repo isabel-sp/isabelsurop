@@ -158,12 +158,14 @@ def draw_buttons(source, temp_clicked, snspd, wvguide):
     cv2.putText(img, 'reset angle', (1250, 40), font, 0.8, white, 1)
 
     #draw dots
-    if temp_clicked:
-        cv2.circle(img, temp_clicked, radius=2, color=purple, thickness=5)
-    if wvguide:
-        cv2.circle(img, wvguide, radius=2, color=blue, thickness=6)
-    if snspd:
-        cv2.circle(img, snspd, radius=2, color=red, thickness=6)
+    try:
+        if not temp_clicked == None:
+            cv2.circle(img, temp_clicked, radius=2, color=purple, thickness=5)
+        if not wvguide == None:
+            cv2.circle(img, wvguide, radius=2, color=blue, thickness=6)
+        if not snspd == None:
+            cv2.circle(img, snspd, radius=2, color=red, thickness=6)
+    except: pass
     return img
 
 def straighten_draw_buttons(source, angle, coords):

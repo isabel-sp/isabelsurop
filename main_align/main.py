@@ -22,6 +22,7 @@ temp_clicked = None
 snspd = None
 wvguide = None
 angle = 0
+img_save_num = 10
 pzt = PZT_driver()
 
 
@@ -30,10 +31,18 @@ def raw_img_format(event, x, y, flags, param):
     global bw_img
     global color_img
     global angle
+    global img_save_num
 
     if event == cv2.EVENT_LBUTTONDOWN:
         color_img = size_and_straighten(raw_img, angle or 0)
         bw_img = img_process_bw(color_img)
+    
+    if event == cv2.EVENT_RBUTTONDOWN:
+        color_img = size_and_straighten(raw_img, angle or 0)
+        bw_img = img_process_bw(color_img)
+        #cv2.imwrite("C:\Users\Experiment\Documents\Isabel UROP\isabelsurop\all_images\colorimg{num}.png".format(num = str(img_save_num)), color_img)
+        cv2.imwrite(str(img_save_num) + '.png', color_img)
+        img_save_num += 1
 
     
 def main_click(event, x, y, flags, param):
