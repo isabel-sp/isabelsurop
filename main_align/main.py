@@ -14,6 +14,7 @@ from display_functions import *
 from img_process import *
 from piezo_helper import *
 from straighten import straighten_sequence
+from datetime import date, datetime
 
 raw_img = None
 bw_img = None
@@ -24,6 +25,7 @@ wvguide = None
 angle = 0
 img_save_num = 10
 pzt = PZT_driver()
+
 
 
 #CALLBACK FUNCTIONS
@@ -41,7 +43,11 @@ def raw_img_format(event, x, y, flags, param):
         color_img = size_and_straighten(raw_img, angle or 0)
         bw_img = img_process_bw(color_img)
         #cv2.imwrite("C:\Users\Experiment\Documents\Isabel UROP\isabelsurop\all_images\colorimg{num}.png".format(num = str(img_save_num)), color_img)
-        cv2.imwrite(str(img_save_num) + '.png', color_img)
+        now = datetime.now()
+        day = now.strftime("%d")
+        image_prefix = now.strftime("%m_%d_%H_%M_%S")
+        print(image_prefix)
+        cv2.imwrite(image_prefix + '.png', color_img)
         img_save_num += 1
 
     
