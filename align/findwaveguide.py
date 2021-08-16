@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import waveguidehelper
 
 #initialize images, set bw and straight to empty
-img_source = cv2.imread('3straightened.png')
+img_source = cv2.imread('image1.png')
 
 #Mouse callback commands
 def straight_img_click(event, x, y, flags, param):

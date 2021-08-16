@@ -1,6 +1,7 @@
 
 # importing the module
 import cv2
+import csv
 import numpy as np
 import alignhelper as im
 # import stagecontrol as mdt
@@ -11,7 +12,7 @@ output_y_coords = []
 straightened = False
 
 #initialize images, set bw and straight to empty
-img_raw = cv2.imread('3clicked.png')
+img_raw = cv2.imread('image1.png')
 
 print(img_raw.shape)
 print(img_raw)
@@ -51,6 +52,10 @@ def straight_img_click(event, x, y, flags, param):
 
     #left click, find coordinate of center waveguide
     if event == cv2.EVENT_LBUTTONDOWN:
+        print(img_straight[y])
+        with open('GFG', 'w') as f:
+            write = csv.writer(f)
+            write.writerow(img_straight[y])
         plt.plot(img_straight[y])
         plt.show(block = False)
 
