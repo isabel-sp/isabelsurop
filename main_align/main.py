@@ -2,7 +2,6 @@
 Main file to run to align
 '''
 
-from align.gaussian_test import gauss_fit_data
 from windows_setup import configure_path
 configure_path()
 
@@ -15,8 +14,7 @@ from display_functions import *
 from img_process import *
 from piezo_helper import *
 from straighten import straighten_sequence
-from datetime import date, datetime
-from data_range import range_select
+from datetime import datetime
 
 raw_img = None
 bw_img = None
@@ -39,11 +37,11 @@ def raw_img_format(event, x, y, flags, param):
 
     if event == cv2.EVENT_LBUTTONDOWN:
         color_img = size_and_straighten(raw_img, angle or 0)
-        bw_img = img_process_bw(color_img)
+        bw_img = convert_green(color_img)
     
     if event == cv2.EVENT_RBUTTONDOWN:
         color_img = size_and_straighten(raw_img, angle or 0)
-        bw_img = img_process_bw(color_img)
+        bw_img = convert_bw(color_img)
         #cv2.imwrite("C:\Users\Experiment\Documents\Isabel UROP\isabelsurop\all_images\colorimg{num}.png".format(num = str(img_save_num)), color_img)
         now = datetime.now()
         day = now.strftime("%d")
@@ -87,11 +85,11 @@ def main_click(event, x, y, flags, param):
 
             #UPDATE VALUES
             temp_clicked = None
-            x_found_wvguide = find_light_point(bw_img, wvguide[0], wvguide[1])
-            wvguide = (x_found_wvguide, wvguide[1])
+            x_found_wvguide = max_list(narrow_down(bw_img, temp_clicked[0], temp_clicked[1]))
+            wvguide = (x_found_wvguide or temp_clicked[0], temp_clicked[1])
+
             #search estimated area that snspd shifted to
-            x_found_snspd = find_light_point(bw_img, snspd[0] + stage_shift, snspd[1])
-            snspd = (x_found_snspd, snspd[1])
+            snspd = find_snspd(bw_img, snspd[0] + stage_shift, snspd[1])
 
         elif click == 'straighten':
             angle = None
@@ -102,19 +100,11 @@ def main_click(event, x, y, flags, param):
             print('setting value')
             if click == 'snspd':
                 #take temp and try to find snspd waveguide, set coordinate
-                selected_data = range_select(narrow_down(bw_img, temp_clicked[0], temp_clicked[1]))
-                try:
-                    x_found = gauss_fit_data(selected_data)
-                except:
-                    print('something went wrong')
-                    x_found = max_list(selected_data)
-
-                # x_found = find_light_point(bw_img, temp_clicked[0], temp_clicked[1])
-                snspd = (x_found or temp_clicked[0], temp_clicked[1])
+                snspd = find_snspd(bw_img, temp_clicked[0], temp_clicked[1])
                 
             elif click == 'wvguide':
                 #take temp and try to find waveguide, set coordinate
-                x_found = find_light_point(bw_img, temp_clicked[0], temp_clicked[1])
+                x_found = max_list(narrow_down(bw_img, temp_clicked[0], temp_clicked[1]))
                 wvguide = (x_found or temp_clicked[0], temp_clicked[1])
 
             temp_clicked = None
@@ -141,12 +131,12 @@ while True:
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         del image_feed
-        cv2.closeAllWindows()
+        cv2.destroyAllWindows()
     
     if angle == None:
         angle = straighten_sequence(bw_img)
         raw_img = size_and_straighten(raw_img, angle or 0)
-        bw_img = img_process_bw(color_img)
+        bw_img = convert_green(color_img)
         print('angle set')
         print(angle)
 

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-
+from matplotlib.backend_bases import MouseButton
 
 def onclick(event):
     global ix, iy
@@ -13,9 +13,9 @@ def onclick(event):
     global range_coords
     range_coords.append(int(ix))
 
-    if event.dblclick:
+    if event.button is MouseButton.RIGHT:
         fig.canvas.mpl_disconnect(cid)
-        plt.close('range select (double click to set)')
+        plt.close('range select (right click to set bounds)')
 
     return range_coords
 
@@ -31,7 +31,7 @@ def range_select(data):
     y = data[1]
     shift = x[0]
 
-    fig = plt.figure('range select (double click to set)')
+    fig = plt.figure('range select (right click to set bounds)')
     ax = fig.add_subplot(111)
     ax.plot(x, y)
     
@@ -39,8 +39,8 @@ def range_select(data):
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
     plt.show()
 
-    start = range_coords[-4]
-    end = range_coords[-3]
+    start = range_coords[-3]
+    end = range_coords[-2]
 
     return (np.arange(start, end, 1), y[start-shift:end-shift])
 
@@ -79,7 +79,7 @@ def gauss_fit_data(data):
     plt.ylabel('Pixel Intensity')
     plt.show()
 
-    return x0
+    return int(x0)
 
 
 if __name__ == ("__main__"):

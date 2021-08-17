@@ -1,7 +1,6 @@
 
 import cv2
-from display_functions import size_and_straighten, straighten_draw_buttons
-from img_process import bw_green
+from display_functions import *
 import math
 
 coords = []

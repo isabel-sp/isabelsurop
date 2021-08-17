@@ -2,6 +2,22 @@ import cv2
 import math
 import numpy as np
 
+
+def convert_img(img, b, g, r):
+    coefficients = [b,g,r]
+    # for standard gray conversion, coefficients = [0.114, 0.587, 0.299]
+    m = np.array(coefficients).reshape((1,3))
+    return cv2.transform(img, m)
+
+def convert_bw(img):
+    return cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+def convert_green(img):
+    return convert_img(img, 0.2, 0.7, 0.1)
+    
+def convert_moregreen(img):
+    return convert_img(img, -0.5, 2, -0.5)
+
 def rotate_image(image, angle):
     image_size = (image.shape[1], image.shape[0])
     image_center = tuple(np.array(image_size) / 2)
@@ -103,10 +119,6 @@ def size_and_straighten(img, angle = 0):
     rotated = rotate_image(np.copy(img), angle)
     img = crop_around_center(rotated, *largest_rotated_rect(image_width, image_height,math.radians(angle)))
     return cv2.resize(img, (1440, 1080))
-
-
-def img_process_bw(img):
-    return cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
 
 def draw_buttons(source, temp_clicked, snspd, wvguide):
