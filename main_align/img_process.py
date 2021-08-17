@@ -10,7 +10,7 @@ def bw_green(img):
             img[row][col] = [img[row][col][1], img[row][col][1], img[row][col][1]]
     return img
 
-def find_light_point(img, x, y, p = 10, scope = 50):
+def narrow_down(img, x, y, p = 10, scope = 50):
 
     lst = img[y]
     cut = int(len(lst)*((100-scope)/200))
@@ -24,6 +24,9 @@ def find_light_point(img, x, y, p = 10, scope = 50):
         if (x+shift < len(lst)) and (lst[x+shift] > cutoff).any() and (high == None):
             high = x+shift
     bounds = (low or x, high or x)
+    return (np.arrange(bounds[0], bounds[1], 1), lst[bounds[0]:bounds[1]])
+
+
     local_max = argrelextrema(lst[bounds[0]:bounds[1]], np.greater)
     plt.figure()
     markers_on = local_max[0]
@@ -59,3 +62,10 @@ def findline_y(img, x, y, thickness = 3, h = 20):
     if bot_edge == None: bot_edge = y1 + thickness
 
     return (x, int((top_edge + bot_edge)/2))
+
+
+def max_list(data):
+    try:
+        return data.index(max(data))
+    except:
+        return None

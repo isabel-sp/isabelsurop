@@ -21,7 +21,7 @@ def onclick(event):
     global coords
     coords.append((ix, iy))
 
-    if len(coords) == 2:
+    if event.dblclick:
         fig.canvas.mpl_disconnect(cid)
         plt.close(3)
         print('finished')

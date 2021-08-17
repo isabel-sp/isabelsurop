@@ -2,6 +2,7 @@
 Main file to run to align
 '''
 
+from align.gaussian_test import gauss_fit_data
 from windows_setup import configure_path
 configure_path()
 
@@ -15,6 +16,7 @@ from img_process import *
 from piezo_helper import *
 from straighten import straighten_sequence
 from datetime import date, datetime
+from data_range import range_select
 
 raw_img = None
 bw_img = None
@@ -100,7 +102,14 @@ def main_click(event, x, y, flags, param):
             print('setting value')
             if click == 'snspd':
                 #take temp and try to find snspd waveguide, set coordinate
-                x_found = find_light_point(bw_img, temp_clicked[0], temp_clicked[1])
+                selected_data = range_select(narrow_down(bw_img, temp_clicked[0], temp_clicked[1]))
+                try:
+                    x_found = gauss_fit_data(selected_data)
+                except:
+                    print('something went wrong')
+                    x_found = max_list(selected_data)
+
+                # x_found = find_light_point(bw_img, temp_clicked[0], temp_clicked[1])
                 snspd = (x_found or temp_clicked[0], temp_clicked[1])
                 
             elif click == 'wvguide':
