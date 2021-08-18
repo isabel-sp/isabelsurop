@@ -186,16 +186,11 @@ class PZT_driver(serial.Serial):
         print('piezo shifted ' + str(pixels * self.ratio) + ' V')
 
     def set_ratio(self, value):
-        #value = cv2.getTrackbarPos('Piezo Stage Speed', "Controls")
-        value -= 25
-        if value > 0:
-            self.ratio = value
-        elif value == 0:
-            self.ratio = 1
+        if self.ratio > 1:
+            self.ratio += value * 0.1
         else:
-            self.ratio = 1/(value * -1)
-        print('set stage ratio '+ str(self.ratio))
-        
+            self.ratio += value
+
     def __del__(self):
         # close the serial port before deleting the object
         self.close()

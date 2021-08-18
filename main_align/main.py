@@ -96,7 +96,12 @@ def main_click(event, x, y, flags, param):
             print('angle setting')
             print(angle)
         
-        elif click == 'stage':
+        elif click == 'stage_up':
+            pzt.set_ratio(1)
+            print('stage speed setting')
+        
+        elif click == 'stage_down':
+            pzt.set_ratio(-1)
             print('stage speed setting')
 
         elif not temp_clicked == None:
@@ -120,10 +125,10 @@ def main_click(event, x, y, flags, param):
 cv2.namedWindow("Camera Feed")
 cv2.namedWindow("Captured Image")
 cv2.namedWindow("Controls")
-cv2.resizeWindow("Controls", (1000, 50))
+
 cv2.setMouseCallback("Camera Feed", raw_img_format)
 cv2.setMouseCallback("Captured Image", main_click)
-cv2.createTrackbar('Piezo Stage Speed', "Controls", 25, 50, pzt.set_ratio)
+
 
 #Initialize Camera
 image_feed = ImageAcquisition()
@@ -134,6 +139,7 @@ while True:
 
     cv2.imshow('Camera Feed', raw_img)
     cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide, pzt))
+    
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         del image_feed
