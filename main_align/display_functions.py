@@ -121,7 +121,7 @@ def size_and_straighten(img, angle = 0):
     return cv2.resize(img, (1440, 1080))
 
 
-def draw_buttons(source, temp_clicked, snspd, wvguide):
+def draw_buttons(source, temp_clicked, snspd, wvguide, pzt):
     can_align = (not snspd == None) and (not wvguide == None) and (not snspd[0] == None) and (not wvguide[0] == None)
     purple = (255,100,170)
     red = (51,51,255)
@@ -168,6 +168,10 @@ def draw_buttons(source, temp_clicked, snspd, wvguide):
     #Straighten
     cv2.rectangle(img, (1240, 10), (1420, 60), black, -1)
     cv2.putText(img, 'reset angle', (1250, 40), font, 0.8, white, 1)
+
+    #Straighten
+    cv2.rectangle(img, (1240, 70), (1420, 120), black, -1)
+    cv2.putText(img, 'stage speed ' + str(pzt.ratio), (1250, 100), font, 0.8, white, 1)
 
     #draw dots
     try:
@@ -216,6 +220,8 @@ def button_clicked(x, y):
         return 'align'
     if within(x, y, (1240, 10), (1420, 60)):
         return 'straighten'
+    if within(x, y, (1240, 70), (1420, 120)):
+        return 'stage'
     return False
 
 def test_function(event, x, y, flags, param):

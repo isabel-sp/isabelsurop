@@ -95,6 +95,9 @@ def main_click(event, x, y, flags, param):
             angle = None
             print('angle setting')
             print(angle)
+        
+        elif click == 'stage':
+            print('stage speed setting')
 
         elif not temp_clicked == None:
             print('setting value')
@@ -127,7 +130,7 @@ while True:
     raw_img = image_feed.get_frame(raw_img)
 
     cv2.imshow('Camera Feed', raw_img)
-    cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide))
+    cv2.imshow("Captured Image", draw_buttons(color_img, temp_clicked, snspd, wvguide, pzt))
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         del image_feed

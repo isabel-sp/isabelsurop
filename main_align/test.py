@@ -1,37 +1,46 @@
-import cv2
+#import opencv and numpy
+import cv2  
 import numpy as np
 
-def convert_bw_green(img):
-    coefficients = [0,1,0]
-    # for standard gray conversion, coefficients = [0.114, 0.587, 0.299]
-    m = np.array(coefficients).reshape((1,3))
-    return cv2.transform(img, m)
-
-def convert_more_green(img):
-    coefficients = [-0.2,1.4,-0.2]
-    # for standard gray conversion, coefficients = [0.114, 0.587, 0.299]
-    m = np.array(coefficients).reshape((1,3))
-    return cv2.transform(img, m)
-
-def convert_bw(img):
-    return cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-def convert_img(img, b, g, r):
-    coefficients = [b,g,r]
-    # for standard gray conversion, coefficients = [0.114, 0.587, 0.299]
-    m = np.array(coefficients).reshape((1,3))
-    return cv2.transform(img, m)
+#trackbar callback fucntion does nothing but required for trackbar
 
 
-im = cv2.imread('08_17_15_07_32.png')
+def change_color(x):
+	#condition to change color if trackbar value is greater than 127 
+	if(cv2.getTrackbarPos('r','controls')>127):
+		global circle_color
+		circle_color=(255,0,0)
+	else:
+		circle_color=(0,0,255)
 
-cv2.imshow('image', im)
-cv2.imshow('0.114, 0.587, 0.299', convert_img(im, 0.114, 0.587, 0.299))
-cv2.imshow('0, 1, 0', convert_img(im, 0, 1, 0))
-cv2.imshow('-2, 4, -2', convert_img(im, -2, 4, -2))
-cv2.imshow('-1, 4, -3', convert_img(im, -1, 4, -3))
-cv2.imshow('-0.2, 1.4, -0.2', convert_img(im, -0.2, 1.4, -0.2))
+#create a seperate window named 'controls' for trackbar
+cv2.namedWindow('controls')
+#create trackbar in 'controls' window with name 'r''
+cv2.createTrackbar('r','controls',15,255,change_color)
+#initial color
+circle_color=(0,0,255)
 
 
-cv2.waitKey(0)
+while(1):
+	#create a black image 
+	img = np.zeros((512,512,3), np.uint8)
+	#calculate center of image
+	img_center_y=img.shape[0]//2
+	img_center_x=img.shape[1]//2
+
+
+
+	#returns current position/value of trackbar 
+	radius= int(cv2.getTrackbarPos('r','controls'))
+	#draw a red circle in the center of the image with radius set by trackbar position
+	cv2.circle(img,(img_center_y,img_center_x), radius, circle_color, -1)
+	#show the image window
+	cv2.imshow('img',img)
+	
+	#waitfor the user to press escape and break the while loop 
+	k = cv2.waitKey(1) & 0xFF
+	if k == 27:
+		break
+		
+#destroys all window
 cv2.destroyAllWindows()

@@ -10,8 +10,9 @@ DEFAULT_PORT = 'COM3'
 class PZT_driver(serial.Serial):
     def __init__(self, port=DEFAULT_PORT, baudrate=115200):
         serial.Serial.__init__(self,port, baudrate, timeout=0.1)
-        self.xyz = [0,0,0]
-        self.set_zero()
+        self.ratio = 1
+        self.xyz = [35,35,35]
+        self.set_all(35)
 
     def set_value(self, cmd, val):
         self.write(str.encode('%s%f\r'%(cmd,val)))
@@ -178,14 +179,27 @@ class PZT_driver(serial.Serial):
     y_max = property(get_y_max, set_y_max)
     z_max = property(get_z_max, set_z_max)
     
-    def shift_pixel(self, pixels, ratio = 0.25):
+    def shift_pixel(self, pixels):
         #75 volt moves it about 1/5 of the height of the thing
-        self.y += pixels * ratio
-        print('piezo shifted ' + str(pixels * ratio) + ' V')
+        self.y += pixels * self.ratio
+        print('piezo shifted ' + str(pixels * self.ratio) + ' V')
+    
+    def set_ratio(self):
+    
+        cv2.namedWindow('Stage Speed')
+        cv2.createTrackbar('r','controls', 0.1, 5, change_speed)
+
+    while True:
+        cv2.imshow('Straighten', straighten_draw_buttons(img, angle, coords))
+        if cv2.waitKey(1) & 0xFF == ord("s"):
+            break
+    cv2.destroyWindow('Straighten')
 
     def __del__(self):
         # close the serial port before deleting the object
         self.close()
+
+
 
 
 #test functions
