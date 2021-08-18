@@ -119,8 +119,11 @@ def main_click(event, x, y, flags, param):
 #Open windows and detect clicks
 cv2.namedWindow("Camera Feed")
 cv2.namedWindow("Captured Image")
+cv2.namedWindow("Controls")
+cv2.resizeWindow("Controls", (1000, 50))
 cv2.setMouseCallback("Camera Feed", raw_img_format)
 cv2.setMouseCallback("Captured Image", main_click)
+cv2.createTrackbar('Piezo Stage Speed', "Controls", 25, 50, pzt.set_ratio)
 
 #Initialize Camera
 image_feed = ImageAcquisition()

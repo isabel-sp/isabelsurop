@@ -4,6 +4,7 @@ import serial
 import sys
 import re
 import time
+import cv2
 
 DEFAULT_PORT = 'COM3'
 
@@ -183,18 +184,18 @@ class PZT_driver(serial.Serial):
         #75 volt moves it about 1/5 of the height of the thing
         self.y += pixels * self.ratio
         print('piezo shifted ' + str(pixels * self.ratio) + ' V')
-    
-    def set_ratio(self):
-    
-        cv2.namedWindow('Stage Speed')
-        cv2.createTrackbar('r','controls', 0.1, 5, change_speed)
 
-    while True:
-        cv2.imshow('Straighten', straighten_draw_buttons(img, angle, coords))
-        if cv2.waitKey(1) & 0xFF == ord("s"):
-            break
-    cv2.destroyWindow('Straighten')
-
+    def set_ratio(self, value):
+        #value = cv2.getTrackbarPos('Piezo Stage Speed', "Controls")
+        value -= 25
+        if value > 0:
+            self.ratio = value
+        elif value == 0:
+            self.ratio = 1
+        else:
+            self.ratio = 1/(value * -1)
+        print('set stage ratio '+ str(self.ratio))
+        
     def __del__(self):
         # close the serial port before deleting the object
         self.close()

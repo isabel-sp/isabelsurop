@@ -169,9 +169,9 @@ def draw_buttons(source, temp_clicked, snspd, wvguide, pzt):
     cv2.rectangle(img, (1240, 10), (1420, 60), black, -1)
     cv2.putText(img, 'reset angle', (1250, 40), font, 0.8, white, 1)
 
-    #Straighten
-    cv2.rectangle(img, (1240, 70), (1420, 120), black, -1)
-    cv2.putText(img, 'stage speed ' + str(pzt.ratio), (1250, 100), font, 0.8, white, 1)
+    #Stage Speed
+    cv2.rectangle(img, (1100, 70), (1420, 120), black, -1)
+    cv2.putText(img, 'stage move step ' + str((pzt.ratio//0.01)/100 + 0.01), (1110, 100), font, 0.8, white, 1)
 
     #draw dots
     try:
