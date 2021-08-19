@@ -85,9 +85,6 @@ def main_click(event, x, y, flags, param):
 
             #UPDATE VALUES
             temp_clicked = None
-            x_found_wvguide = max_list(narrow_down(bw_img, temp_clicked[0], temp_clicked[1]))
-            wvguide = (x_found_wvguide or temp_clicked[0], temp_clicked[1])
-
             #search estimated area that snspd shifted to
             snspd = find_snspd(bw_img, snspd[0] + stage_shift, snspd[1])
 
@@ -112,8 +109,7 @@ def main_click(event, x, y, flags, param):
                 
             elif click == 'wvguide':
                 #take temp and try to find waveguide, set coordinate
-                x_found = max_list(narrow_down(bw_img, temp_clicked[0], temp_clicked[1]))
-                wvguide = (x_found or temp_clicked[0], temp_clicked[1])
+                wvguide = find_snspd(bw_img, temp_clicked[0], temp_clicked[1])
 
             temp_clicked = None
         else:
@@ -124,7 +120,6 @@ def main_click(event, x, y, flags, param):
 #Open windows and detect clicks
 cv2.namedWindow("Camera Feed")
 cv2.namedWindow("Captured Image")
-cv2.namedWindow("Controls")
 
 cv2.setMouseCallback("Camera Feed", raw_img_format)
 cv2.setMouseCallback("Captured Image", main_click)

@@ -13,7 +13,7 @@ def convert_bw(img):
     return cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
 def convert_green(img):
-    return convert_img(img, 0.2, 0.7, 0.1)
+    return convert_img(img, 0.1, 0.7, 0.2)
     
 def convert_moregreen(img):
     return convert_img(img, -0.5, 2, -0.5)

@@ -161,12 +161,10 @@ def gauss_fit_data(data):
     return int(x0)
 
 def find_snspd(image, x_selected, y_selected):
-
-    plt.figure('whole thing')
-    plt.plot(image[y_selected])
-    plt.show(block = False)
     
     narrow_data = narrow_down(image, x_selected, y_selected)
+    if len(narrow_data) < 5:
+        narrow_data = (np.arange(x_selected-100, x_selected+100, 1), image[y_selected][x_selected-100 : x_selected+100])
     selected_data = range_select(narrow_data)
     if selected_data == None:
         all_data = (np.arange(0, len(image[y_selected]), 1), image[y_selected])
