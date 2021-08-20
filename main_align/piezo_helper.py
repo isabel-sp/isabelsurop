@@ -11,7 +11,7 @@ DEFAULT_PORT = 'COM3'
 class PZT_driver(serial.Serial):
     def __init__(self, port=DEFAULT_PORT, baudrate=115200):
         serial.Serial.__init__(self,port, baudrate, timeout=0.1)
-        self.ratio = 1
+        self.ratio = 0.5
         self.xyz = [35,35,35]
         self.set_all(35)
 
@@ -186,8 +186,10 @@ class PZT_driver(serial.Serial):
         print('piezo shifted ' + str(pixels * self.ratio) + ' V')
 
     def set_ratio(self, value):
-        if self.ratio > 1:
+        if self.ratio <= 1:
             self.ratio += value * 0.1
+        elif self.ratio <= 0:
+            self.ratio = 0
         else:
             self.ratio += value
 

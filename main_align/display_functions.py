@@ -1,3 +1,4 @@
+from piezo_helper import *
 import cv2
 import math
 import numpy as np
@@ -170,9 +171,10 @@ def draw_buttons(source, temp_clicked, snspd, wvguide, pzt):
     cv2.putText(img, 'reset angle', (1250, 40), font, 0.8, white, 1)
 
     #Stage Speed
-    cv2.rectangle(img, (1100, 70), (1420, 120), black, -1)
-    cv2.putText(img, 'stage ' + str(int(pzt.ratio * 100) / 100), (1110, 100), font, 0.8, white, 1)
-    cv2.rectangle(img, (1250, 70), (1300, 120), purple, -1)
+    cv2.rectangle(img, (1150, 70), (1420, 120), black, -1)
+    cv2.putText(img, 'stage ' + str(int(pzt.ratio * 100) / 100), (1160, 100), font, 0.8, white, 1)
+    cv2.rectangle(img, (1315, 75), (1360, 115), blue, -1)
+    cv2.rectangle(img, (1370, 75), (1415, 115), red, -1)
 
     #draw dots
     try:
@@ -221,8 +223,10 @@ def button_clicked(x, y):
         return 'align'
     if within(x, y, (1240, 10), (1420, 60)):
         return 'straighten'
-    if within(x, y, (1240, 70), (1420, 120)):
-        return 'stage'
+    if within(x, y, (1315, 75), (1360, 115)):
+        return 'stage_down'
+    if within(x, y, (1370, 75), (1415, 115)):
+        return 'stage_up'
     return False
 
 def test_function(event, x, y, flags, param):
@@ -237,8 +241,9 @@ def test_function(event, x, y, flags, param):
 
 
 if __name__ == "__main__":
-    img = cv2.imread('test_14401080.png')
-    button_img = draw_buttons(img, (1000, 1000), (500, 1000), (500, 500))
+    img = cv2.imread('4.png')
+    pzt = PZT_driver()
+    button_img = draw_buttons(img, (1000, 1000), (500, 1000), (500, 500), pzt)
     cv2.imshow('display', button_img)
     cv2.setMouseCallback("display", test_function)
     cv2.waitKey(0)

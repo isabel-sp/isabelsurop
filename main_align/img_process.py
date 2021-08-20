@@ -108,10 +108,7 @@ def range_select(data):
     plt.title('click on lower bound then upper bound, right click to set')
     plt.suptitle('double click to zoom out')
     plt.plot(x, y)
-    # ax = fig.add_subplot(111)
-    # ax.plot(x, y)
     
-
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
     plt.show()
 
@@ -160,11 +157,12 @@ def gauss_fit_data(data):
 
     return int(x0)
 
+
 def find_snspd(image, x_selected, y_selected):
     
     narrow_data = narrow_down(image, x_selected, y_selected)
     if len(narrow_data) < 5:
-        narrow_data = (np.arange(x_selected-100, x_selected+100, 1), image[y_selected][x_selected-100 : x_selected+100])
+        narrow_data = (np.arange(x_selected-50, x_selected+50, 1), image[y_selected][x_selected-100 : x_selected+100])
     selected_data = range_select(narrow_data)
     if selected_data == None:
         all_data = (np.arange(0, len(image[y_selected]), 1), image[y_selected])

@@ -59,7 +59,6 @@ def main_click(event, x, y, flags, param):
     global angle
 
     if event == cv2.EVENT_LBUTTONDOWN:
-        print('clicked')
         click = button_clicked(x, y)
         if not click:
             print('marked point')
@@ -96,10 +95,12 @@ def main_click(event, x, y, flags, param):
         elif click == 'stage_up':
             pzt.set_ratio(1)
             print('stage speed setting')
+            print(pzt.ratio)
         
         elif click == 'stage_down':
             pzt.set_ratio(-1)
             print('stage speed setting')
+            print(pzt.ratio)
 
         elif not temp_clicked == None:
             print('setting value')
@@ -139,6 +140,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         del image_feed
         cv2.destroyAllWindows()
+        break
     
     if angle == None:
         angle = straighten_sequence(bw_img)
