@@ -16,8 +16,9 @@ def convert_bw(img):
 def convert_green(img):
     return convert_img(img, 0.1, 0.7, 0.2)
     
-def convert_moregreen(img):
+def convert_greener(img):
     return convert_img(img, -0.5, 2, -0.5)
+
 
 def rotate_image(image, angle):
     image_size = (image.shape[1], image.shape[0])
@@ -187,6 +188,7 @@ def draw_buttons(source, temp_clicked, snspd, wvguide, pzt):
     except: pass
     return img
 
+
 def straighten_draw_buttons(source, angle, coords):
     img = np.ndarray.copy(source)
     white = (255, 255, 255)
@@ -208,8 +210,10 @@ def straighten_draw_buttons(source, angle, coords):
 
     return img
 
+
 def within(x, y, corner1, corner2):
     return x < corner2[0] and x > corner1[0] and y < corner2[1] and y > corner1[1]
+
 
 def button_clicked(x, y):
     '''
@@ -229,6 +233,7 @@ def button_clicked(x, y):
         return 'stage_up'
     return False
 
+
 def test_function(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         xy = "%d,%d" % (x, y)
@@ -237,7 +242,6 @@ def test_function(event, x, y, flags, param):
                     1.0, (0, 0, 0), thickness=1)
         print(button_clicked(x, y))
         cv2.imshow("display", img)
-
 
 
 if __name__ == "__main__":

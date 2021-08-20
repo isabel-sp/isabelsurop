@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from matplotlib.backend_bases import MouseButton
 
-
-
 def narrow_down(img, x, y, p = 20, scope = 75):
 
     lst = img[y]
@@ -64,22 +62,16 @@ def findline_y(img, x, y, thickness = 3, h = 20):
     return (x, int((top_edge + bot_edge)/2))
 
 
-def max_list(data):
-    try:
-        return data.index(max(data))
-    except:
-        return None
-
-
 def onclick(event):
+    #click callback for user selecting ranges
     global ix, iy
     global fig
     ix, iy = event.xdata, event.ydata
-    print ('x = %d, y = %d'%(
-        ix, iy))
+    print ('x = %d, y = %d'%(ix, iy))
 
     global range_coords
     range_coords.append(int(ix))
+    print('selected x-value ' + str(ix))
 
     if event.button is MouseButton.RIGHT:
         fig.canvas.mpl_disconnect(cid)
@@ -160,19 +152,18 @@ def gauss_fit_data(data):
 
 def find_snspd(image, x_selected, y_selected):
     
-    narrow_data = narrow_down(image, x_selected, y_selected)
-    if len(narrow_data) < 5:
-        narrow_data = (np.arange(x_selected-50, x_selected+50, 1), image[y_selected][x_selected-100 : x_selected+100])
-    selected_data = range_select(narrow_data)
+    data = narrow_down(image, x_selected, y_selected)
+    if len(data) < 5:
+        data = (np.arange(x_selected-50, x_selected+50, 1), image[y_selected][x_selected-50 : x_selected+50])
+    selected_data = range_select(data)
     if selected_data == None:
         all_data = (np.arange(0, len(image[y_selected]), 1), image[y_selected])
         selected_data = range_select(all_data)
-    
     try:
         x_found = gauss_fit_data(selected_data)
     except:
-        print('something went wrong')
-        x_found = max_list(selected_data)
+        print('something went wrong, finding max instead')
+        x_found = selected_data.index(max(selected_data))
 
     return (x_found or x_selected, y_selected)
 

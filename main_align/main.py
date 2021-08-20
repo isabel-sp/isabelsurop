@@ -23,7 +23,6 @@ temp_clicked = None
 snspd = None
 wvguide = None
 angle = 0
-img_save_num = 10
 pzt = PZT_driver()
 
 
@@ -115,6 +114,12 @@ def main_click(event, x, y, flags, param):
             temp_clicked = None
         else:
             print('click somewhere to set value')
+
+    if event == cv2.EVENT_RBUTTONDOWN:
+        now = datetime.now()
+        image_prefix = now.strftime("%m_%d_%H_%M_%S")
+        print(image_prefix)
+        cv2.imwrite(image_prefix + '.png', draw_buttons(color_img, temp_clicked, snspd, wvguide, pzt))
         
 
 
